@@ -55,8 +55,8 @@ async function handleFormSubmit(formId) {
         }
 
         const payload = {
-            page_url: "dwarkaomaxe.propertiesnewlaunch.in", // Replace with actual page URL if needed
-            project_name: "dwarkaomaxe", // Replace with actual project name
+            page_url: "aajneetiadvertising.github.io/VVIPNamah", // Replace with actual page URL if needed
+            project_name: "VVIPNamah", // Replace with actual project name
             name: name,
             mobile: phone,
             city: city
