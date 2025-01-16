@@ -20,49 +20,63 @@ async function handleFormSubmit(formId) {
             }
         });
 
+        // Gather form data
+        const name = form.querySelector('[name="name1"]') ? form.querySelector('[name="name1"]').value.trim() : '';
+        const phone = form.querySelector('[name="phone"]') ? form.querySelector('[name="phone"]').value.trim() : '';
+        const city = form.querySelector('[name="City"]') ? form.querySelector('[name="City"]').value.trim() : '';
+
+        // Validation for missing fields
+        let missingFields = [];
+        if (!name) missingFields.push('Name');
+        if (!phone) missingFields.push('Phone');
+        if (!city) missingFields.push('City');
+
+        if (missingFields.length > 0) {
+            Swal.close(); // Close the waiting indicator
+            Swal.fire({
+                title: 'Missing Fields',
+                text: `Please fill out the following fields: ${missingFields.join(', ')}`,
+                icon: 'warning',
+                confirmButtonText: 'Close'
+            });
+            return;
+        }
+
+        // Validate phone number length
+        if (!/^\d{10}$/.test(phone)) {
+            Swal.close(); // Close the waiting indicator
+            Swal.fire({
+                title: 'Invalid Phone Number',
+                text: 'Please enter a valid 10-digit mobile number.',
+                icon: 'error',
+                confirmButtonText: 'Close'
+            });
+            return;
+        }
+
+        const payload = {
+            page_url: "dwarkaomaxe.propertiesnewlaunch.in", // Replace with actual page URL if needed
+            project_name: "dwarkaomaxe", // Replace with actual project name
+            name: name,
+            mobile: phone,
+            city: city
+        };
+
+        const apiUrl = "https://api.aajneetiadvertising.com/lead/save";
+
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload)
+        };
+
         try {
-            // Gather form data
-            const name = form.querySelector('[name="name1"]') ? form.querySelector('[name="name1"]').value.trim() : '';
-            const phone = form.querySelector('[name="phone"]') ? form.querySelector('[name="phone"]').value.trim() : '';
-            const city = form.querySelector('[name="City"]') ? form.querySelector('[name="City"]').value.trim() : '';
-
-            // Validation for missing fields
-            let missingFields = [];
-            if (!name) missingFields.push('Name');
-            if (!phone) missingFields.push('Phone');
-            if (!city) missingFields.push('City');
-
-            if (missingFields.length > 0) {
-                throw new Error(`Missing fields: ${missingFields.join(', ')}`);
-            }
-
-            // Validate phone number length
-            if (!/^\d{10}$/.test(phone)) {
-                throw new Error('Invalid phone number. Please enter a valid 10-digit mobile number.');
-            }
-
-            const payload = {
-                page_url: "http://127.0.0.1:5501/index.html", // Replace with actual page URL if needed
-                project_name: "VVIP Namah", // Replace with actual project name
-                name: name,
-                mobile: phone,
-                city: city
-            };
-
-            const apiUrl = "https://api.aajneetiadvertising.com/lead/save";
-
-            const requestOptions = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload)
-            };
-
             const response = await fetch(apiUrl, requestOptions);
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
@@ -85,13 +99,10 @@ async function handleFormSubmit(formId) {
             // Show error popup
             Swal.fire({
                 title: 'Error',
-                text: error.message || 'There was an error submitting the form. Please try again.',
+                text: 'There was an error submitting the form. Please try again.',
                 icon: 'error',
                 confirmButtonText: 'Close'
             });
-        } finally {
-            // Ensure the loading spinner is closed
-            Swal.close();
         }
     });
 }
